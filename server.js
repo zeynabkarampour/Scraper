@@ -3,6 +3,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var path = require("path");
 // Requiring our Note and Article models
 var Note = require("./models/Note.js");
 var Article = require("./models/Article.js");
@@ -19,6 +20,10 @@ var cheerio = require("cheerio");
 mongoose.Promise = Promise;
 
 var PORT = process.env.PORT || 8080;
+
+// If deployed, use the deployed database. Otherwise use the local mongoScraper database
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/week18Populater";
+
 
 // Initialize Express
 var app = express();
@@ -47,7 +52,15 @@ var routes = require("./controllers/scraper_controller.js");
 
 app.use("/", routes);
 
-mongoose.connect("mongodb://heroku_gnzk5747:4d2121nhgnfbdl1pfirsdepk9n@ds125262.mlab.com:25262/heroku_gnzk5747");
+//mongoose.connect("mongodb://heroku_gnzk5747:4d2121nhgnfbdl1pfirsdepk9n@ds125262.mlab.com:25262/heroku_gnzk5747");
+
+// // If deployed, use the deployed database. Otherwise use the local mongoScraper database
+//var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoScraper";
+
+// Database configuration with mongoose
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
+
+
 
 var db = mongoose.connection;
 
