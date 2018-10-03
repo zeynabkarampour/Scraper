@@ -16,6 +16,11 @@ var ArticleSchema = new Schema({
     type: String,
     required: true
   },
+
+  body: {
+    type: String,
+
+  },
   // Saves array of notes.
   notes: [{
     type: Schema.Types.ObjectId,

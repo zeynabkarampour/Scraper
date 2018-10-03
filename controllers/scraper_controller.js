@@ -75,7 +75,7 @@ router.post("/scrape", function (req, res) {
     var $ = cheerio.load(html);
 
     // Make emptry array for temporarily saving and showing scraped Articles.
-
+    console.log('article.length', $("article").length);
     // Now, we grab every h2 within an article tag, and do the following:
     $("article").each(function (i, element) {
 
@@ -86,15 +86,20 @@ router.post("/scrape", function (req, res) {
       // Add the text and href of every link, and save them as properties of the result object
       // result.note = $(this).find("a").find("li").text();
       result.title = $(this).find("a").find("h2").text();
+      result.body = $(this).find("a").find("h2").parent().next().text();
       console.log("What's the result title? " + result.title);
+      console.log("What's the result body? " + result.body);
 
-      result.link = $(this).find("a").attr("href");
-      console.log('result', result);
-      Article.create(result).then(dbArticle => {
-        scrapedArticles.push(dbArticle);
-      })
-      if (i === $("article").length) {
+      result.link = 'http://www.nytimes.com' + $(this).find("a").attr("href");
+      console.log('result', result, i);
+      if (result.title) {
+        Article.create(result).then(dbArticle => {
+          scrapedArticles.push(dbArticle);
+        })
+      }
+      if (i === $("article").length - 1) {
         try {
+          console.log('scraping is done');
           callback();
         } catch (err) {
           console.log('err', err);
